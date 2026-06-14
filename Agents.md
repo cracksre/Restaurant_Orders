@@ -1,180 +1,163 @@
-# Agents.md
+You are a Senior AWS Solutions Architect and Principal Software Engineer.
 
-## Project
+Build a complete production-ready Alexa Restaurant Ordering Demo.
 
-Alexa Restaurant Voice Ordering Assistant
+Goal:
 
-Build and deploy a production-ready serverless restaurant ordering platform that allows guests to place food orders through Alexa devices located at restaurant tables and kiosks.
+Implement a voice ordering system where a user can:
 
-The platform must support natural-language ordering, menu browsing, item customization, contextual upsells, cart management, inventory-aware recommendations, and POS/KDS integration.
+1. Launch Alexa skill
+2. Ask for menu items
+3. Add an item
+4. Confirm order
+5. Receive generated Order ID
 
----
+Technology Requirements
 
-## Business Goals
+AWS Services:
 
-Reduce order entry errors.
+* Alexa Custom Skill
+* API Gateway
+* Lambda Python 3.12
+* Amazon Bedrock
+* DynamoDB
+* CloudWatch
+* KMS
+* IAM
 
-Reduce front-of-house staffing requirements during peak periods.
+Infrastructure Requirements
 
-Increase average check size through AI-generated upsells.
+Generate Terraform code for every AWS resource.
 
-Provide a hands-free ordering experience.
+Terraform version:
 
----
+> =1.7
 
-## Acceptance Criteria
+AWS Provider:
 
-### Functional
+> =5.0
 
-Guest can:
+Create separate Terraform modules:
 
-* Launch Alexa skill
-* Browse menu categories
-* Add items with modifications
-* Remove items
-* Change quantities
-* Review cart
-* Confirm order
-* Receive spoken order ID
+modules/
 
-### Non Functional
+api_gateway/
+lambda/
+dynamodb/
+iam/
+kms/
+bedrock/
+cloudwatch/
 
-* p99 latency <= 1.5 seconds
-* Support 500 concurrent Alexa sessions
-* AES-256 encryption at rest
-* TLS 1.2+ encryption in transit
-* No payment card storage
-* Order retention 90 days
+Create reusable variables and outputs.
 
----
+Python Requirements
 
-## Required AWS Services
+Generate Lambda code using:
 
-### Voice Layer
+boto3
+ask-sdk-core
+ask-sdk-model
+pydantic
+aws-lambda-powertools
 
-Amazon Alexa Custom Skill
+Create requirements.txt.
 
-### AI Layer
+Alexa Skill Requirements
 
-Amazon Bedrock
-Claude Sonnet model
+LaunchRequest
 
-### Compute
+Response:
 
-AWS Lambda
+"Welcome to Alexa Restaurant. Would you like to hear today's menu?"
 
-### APIs
+Intent:
 
-Amazon API Gateway
+ShowMenuIntent
 
-### Workflow
+Sample Utterances:
 
-AWS Step Functions
+Show menu
 
-### Data
+What do you have
 
-Amazon DynamoDB
+Show entrees
 
-Tables:
+Response:
 
-MenuTable
+Read menu items stored in DynamoDB.
 
-PartitionKey:
-menuItemId
-
-OrderTable
-
-PartitionKey:
-orderId
-
-TTL:
-90 days
-
-SessionTable
-
-PartitionKey:
-sessionId
-
-InventoryTable
-
-PartitionKey:
-itemId
-
----
-
-## Agent Design
-
-Create a Bedrock Agent named:
-
-RestaurantOrderingAgent
-
-The agent must expose the following tools.
-
-### MenuLookupTool
-
-Returns menu categories and menu items.
-
-### InventoryTool
-
-Checks if an item is 86'd.
-
-### CartTool
-
-Maintains cart state.
-
-### UpsellTool
-
-Provides contextual upsells.
-
-Examples:
-
-Burger -> fries
-
-Steak -> wine
-
-Salmon -> dessert recommendation
-
-### PricingTool
-
-Calculates totals.
-
-### OrderTool
-
-Creates order.
-
-### POSIntegrationTool
-
-Sends order payload to external POS.
-
-### KDSTool
-
-Publishes kitchen order events.
-
----
-
-## Alexa Intents
-
-LaunchIntent
-
-BrowseMenuIntent
+Intent:
 
 AddItemIntent
 
-ModifyItemIntent
+Slots:
 
-RemoveItemIntent
+MenuItem
 
-ReviewCartIntent
+Response:
+
+Add item to cart.
+
+Store cart in SessionTable.
+
+Intent:
 
 ConfirmOrderIntent
 
-CancelIntent
+Response:
 
-HelpIntent
+Create order.
 
----
+Generate UUID order id.
 
-## DynamoDB Schema
+Persist order to OrdersTable.
+
+Read confirmation back to user.
+
+Bedrock Requirements
+
+Create RestaurantOrderingAgent.
+
+Agent must have:
+
+MenuLookupTool
+OrderConfirmationTool
+
+Implement Bedrock invocation using boto3.
+
+Prompt Template:
+
+You are a restaurant ordering assistant.
+
+Never invent menu items.
+
+Only use items returned from MenuTable.
+
+Security Requirements
+
+Enable KMS encryption.
+
+Enable TLS.
+
+Least privilege IAM policies.
+
+No hardcoded secrets.
+
+Use Secrets Manager.
+
+DynamoDB Requirements
+
+MenuTable
+
+PK:
+menuItemId
+
+Attributes:
+
+name
+price
+category
 
 SessionTable
 
@@ -184,14 +167,12 @@ sessionId
 Attributes:
 
 cart
-guestCount
-lastIntent
-conversationState
+updatedAt
 
 TTL:
 2 hours
 
-OrderTable
+OrdersTable
 
 PK:
 orderId
@@ -199,8 +180,6 @@ orderId
 Attributes:
 
 items
-subtotal
-tax
 total
 status
 createdAt
@@ -208,146 +187,56 @@ createdAt
 TTL:
 90 days
 
----
+CloudWatch Requirements
 
-## Lambda Functions
+Create dashboard:
 
-SkillHandlerFunction
+Alexa Requests
+Lambda Duration
+Lambda Errors
+Order Count
 
-MenuServiceFunction
+Deployment Requirements
 
-CartServiceFunction
+Generate:
 
-InventoryServiceFunction
+terraform init
 
-UpsellServiceFunction
+terraform plan
 
-OrderServiceFunction
+terraform apply
 
-POSWebhookFunction
+commands.
 
-KDSPublisherFunction
+Generate GitHub Actions workflow.
 
----
+Workflow stages:
 
-## Event Driven Design
+lint
+unit-test
+terraform-plan
+terraform-apply
 
-OrderConfirmed Event
+Testing Requirements
 
-Publish to EventBridge.
+Generate pytest test cases.
 
-Consumers:
+Create mock Alexa requests.
 
-POS Integration
+Create mock Bedrock responses.
 
-Kitchen Display Integration
+Create mock DynamoDB responses.
 
-Analytics Pipeline
+Deliverables
 
-Notification Service
+Generate all source code.
 
----
+Generate all Terraform.
 
-## Security
+Generate architecture documentation.
 
-Enable KMS encryption.
+Generate deployment guide.
 
-Store secrets in Secrets Manager.
+Generate sample Alexa interaction transcripts.
 
-Use least privilege IAM roles.
-
-Enable CloudTrail.
-
-Enable AWS WAF on API Gateway.
-
-Use Cognito for admin APIs.
-
-No PCI data storage.
-
----
-
-## Observability
-
-CloudWatch Metrics
-
-CloudWatch Logs
-
-AWS X-Ray
-
-Create dashboards for:
-
-Order Volume
-
-Order Latency
-
-Upsell Conversion
-
-Inventory Rejections
-
-Alexa Errors
-
----
-
-## Deployment
-
-Use AWS CDK TypeScript.
-
-Create:
-
-API Gateway
-
-Lambda Functions
-
-DynamoDB Tables
-
-EventBridge Bus
-
-Step Functions
-
-CloudWatch Dashboards
-
-IAM Roles
-
-Deploy using:
-
-cdk bootstrap
-
-cdk synth
-
-cdk deploy
-
----
-
-## Load Testing
-
-Create a load test simulating:
-
-500 concurrent Alexa sessions
-
-Success criteria:
-
-p99 latency <= 1.5 seconds
-
-Error rate < 1%
-
----
-
-## Deliverables
-
-Source Code
-
-Infrastructure as Code
-
-Deployment Pipeline
-
-Architecture Diagram
-
-API Documentation
-
-Operational Runbook
-
-Load Test Results
-
-Security Review Report
-
-README
+The generated solution must deploy successfully into AWS and be runnable end-to-end.
