@@ -1,0 +1,54 @@
+# Restaurant Ordering Assistant - Requirements
+
+## Python Dependencies
+
+boto3==1.28.0
+botocore==1.31.0
+requests==2.31.0
+
+## AWS Services Required
+
+- AWS Lambda
+- Amazon DynamoDB
+- Amazon API Gateway
+- AWS EventBridge
+- AWS Step Functions
+- Amazon Bedrock
+- AWS CloudWatch
+- AWS X-Ray
+- AWS CloudTrail
+- AWS KMS
+- AWS IAM
+
+## Terraform Requirements
+
+- Terraform >= 1.0
+- AWS Provider >= 5.0
+
+## Development Tools
+
+- Python 3.9+
+- AWS CLI v2
+- Terraform
+- Git
+- Docker (optional, for local testing)
+
+## AWS IAM Permissions Required
+
+The user/role deploying this solution needs the following permissions:
+- Lambda: CreateFunction, UpdateFunctionCode, DeleteFunction
+- DynamoDB: CreateTable, DeleteTable, UpdateTable
+- API Gateway: CreateRestApi, CreateMethod, CreateDeployment
+- EventBridge: CreateEventBus, PutRule, PutTargets
+- Step Functions: CreateStateMachine, DeleteStateMachine
+- KMS: CreateKey, CreateAlias, Encrypt, Decrypt
+- IAM: CreateRole, AttachRolePolicy, PutRolePolicy
+- CloudWatch: CreateLogGroup, CreateAlarm, PutMetricAlarm
+- S3: CreateBucket, PutObject (for CloudTrail logs)
+
+## Recommended AWS Configuration
+
+- Region: us-east-1 (or your preferred region)
+- Backup: Enable point-in-time recovery for DynamoDB
+- Monitoring: CloudWatch alarms for error rates and latency
+- Security: Enable CloudTrail for audit logging
